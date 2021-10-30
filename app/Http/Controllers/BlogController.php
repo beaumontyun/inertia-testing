@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BlogController extends Controller
 {
@@ -45,7 +46,22 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Blog::create(
+        //     Request::validate([
+        //         'title' => ['required', 'max:50'],
+        //         'body' => ['required', 'max:50'],
+        //     ])
+        // );
+
+        Validator::make($request->all(), [
+            'title' => ['required'],
+            'body' => ['required'],
+        ])->validate();
+  
+        Blog::create($request->all());
+  
+        return redirect()->back()
+                    ->with('message', 'Post Created Successfully.');
     }
 
     /**
@@ -79,7 +95,16 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        Validator::make($request->all(), [
+            'title' => ['required'],
+            'body' => ['required'],
+        ])->validate();
+  
+        if ($request->has('id')) {
+            Blog::find($request->input('id'))->update($request->all());
+            return redirect()->back()
+                    ->with('message', 'Post Updated Successfully.');
+        }
     }
 
     /**
@@ -88,8 +113,11 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        if ($request->has('id')) {
+            Blog::find($request->input('id'))->delete();
+            return redirect()->back();
+        }
     }
 }

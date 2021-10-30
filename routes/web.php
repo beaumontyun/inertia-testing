@@ -26,6 +26,8 @@ Route::get('/', function () {
 
 Route::get('/blog', [BlogController::class, 'index']);
 
+Route::post('/blog', [BlogController::class, 'store']);
+
 // Route::get('/test', function() {
 //     return Inertia::render('Blog/Index');
 // });
